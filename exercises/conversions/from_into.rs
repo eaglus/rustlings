@@ -33,10 +33,31 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        let split: Vec<&str> = s.split(',').collect();
+        let ageOpt = if split.len() == 2  {
+            split.get(1).and_then(|s| usize::from_str_radix(*s, 10).ok())
+        } else {
+            None
+        };
+        
+        let nameOpt = split.get(0).and_then(|s| {
+            if s.len() > 0 {
+                Some(s)
+            } else {
+                None
+            }
+        });
+
+        if let (Some(age), Some(name)) = (ageOpt, nameOpt) {
+            Person {
+                name: split[0].to_string(),
+                age: age
+            }
+        } else {
+            Person::default()
+        }
     }
 }
 
